@@ -3,10 +3,11 @@ from collections import namedtuple
 from io import StringIO
 from ._amzi import ffi
 from . import funcexport
-from .utils import split_clauses
+from .utils import split_clauses, find_files
 
 
-lib = ffi.dlopen(r"C:\Users\RY\Documents\pythonlib\pyamzi\apls\bin\amzi.dll")
+lib = ffi.dlopen(find_files("amzi.dll")[0])
+
 
 RC_FUNCS = {
     "lsInitW",
