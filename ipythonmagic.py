@@ -58,6 +58,10 @@ class AmziMagics(Magics):
         name = None if line == "" else line
         return self.get_engine({"name":name})
 
+    def __del__(self):
+        for eng in self.engines.values():
+            eng.close()
+
 
 def load_ipython_extension(ip):
     ip.register_magics(AmziMagics)
