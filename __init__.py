@@ -1,0 +1,1 @@
+from .ipythonmagic import load_ipython_extension
