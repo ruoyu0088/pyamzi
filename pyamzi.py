@@ -462,7 +462,7 @@ class Engine:
             return Struct(term.functor, term.arguments)
 
         elif term.is_var:
-            return self
+            return term
 
         if type_id in self.type_map:
             c_type, ffi_type, cast_func = self.type_map[type_id]
