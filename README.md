@@ -11,3 +11,7 @@ Download the project, and copy it to the Python search path. Download [Amzi! Pro
 
 * [cffi](http://cffi.readthedocs.io/en/latest/)
 * [py.test](http://doc.pytest.org/en/latest/)
+
+## Demos
+
+* [Introduction](pyamzi_demo.ipynb)
