@@ -178,7 +178,7 @@ class Term:
         return self.type_id == lib.pSTR
 
     def unify(self, term):
-        return self.eng.ls_unify(self.ID, term.ID)
+        return bool(self.eng.ls_unify(self.ID, term.ID))
 
     def to_object(self):
         return self.eng.term_to_object(self)
