@@ -47,6 +47,18 @@ class AmziMagics(Magics):
         return res, term
 
     @line_cell_magic
+    def query_one(self, line='', cell=None):
+        eng, code = self._line_cell_help(line, cell)
+        res = eng.query_one(code)
+        return res
+
+    @line_cell_magic
+    def query_all(self, line='', cell=None):
+        eng, code = self._line_cell_help(line, cell)
+        res = eng.query_all(code)
+        return list(res)
+
+    @line_cell_magic
     def findall(self, line='', cell=None):
         eng, code = self._line_cell_help(line, cell)
         res = eng.find_all(code)
