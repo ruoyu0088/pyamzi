@@ -153,3 +153,15 @@ def test_builder():
     from .builder import cmp_path, lnk_path
     assert cmp_path.endswith(".exe")
     assert lnk_path.endswith(".exe")
+
+
+def test_query(eng):
+    test_code = """
+    parent(a, b).
+    parent(a, c).
+    """
+    eng.assert_program(test_code)
+    assert eng.query_one("parent(X, Y)") == {"X":"a", "Y":"b"}
+    assert eng.query_one("parent(b, X)") is None
+    assert list(eng.query_all("parent(X, Y)")) == [{"X":"a", "Y":"b"}, {"X":"a", "Y":"c"}]
+    assert list(eng.query_all("parent(b, X)")) == []

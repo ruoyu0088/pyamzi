@@ -398,6 +398,26 @@ class Engine:
     def exec_str(self, term_str):
         return self._call_exec_help("lsExecStrW", term_str)
 
+    def query_one(self, query):
+        term_str = "varlist_query(`{}`, L, Z)".format(query)
+        res, term = self.exec_str(term_str)
+        if not res:
+            return None
+        query_res = term.get_arg_term(2).to_object()
+        return dict(zip(query_res[::2], query_res[1::2]))
+
+    def query_all(self, query):
+        term_str = "varlist_query(`{}`, L, Z)".format(query)
+        res, term = self.call_str(term_str)
+        query_term = term.get_arg_term(2)
+        if not res:
+            return
+        while True:
+            query_res = query_term.to_object()
+            yield dict(zip(query_res[::2], query_res[1::2]))
+            if not self.redo():
+                break
+
     def redo(self):
         res = self.ls_redo()
         return bool(res)
