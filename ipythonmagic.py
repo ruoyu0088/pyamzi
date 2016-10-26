@@ -41,7 +41,7 @@ class AmziMagics(Magics):
         return eng, code
 
     @line_cell_magic
-    def query(self, line='', cell=None):
+    def call_term(self, line='', cell=None):
         eng, code = self._line_cell_help(line, cell)
         res, term = eng.call_str(code)
         return res, term
