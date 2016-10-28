@@ -31,7 +31,7 @@ class AmziMagics(Magics):
     def consult(self, line, cell):
         args = magic_arguments.parse_argstring(self.consult, line)
         eng = self.get_engine(args)
-        eng.consult(cell)
+        eng.consult_str(cell)
 
     @magic_arguments.magic_arguments()
     @name_argument
@@ -39,7 +39,7 @@ class AmziMagics(Magics):
     def reconsult(self, line, cell):
         args = magic_arguments.parse_argstring(self.reconsult, line)
         eng = self.get_engine(args)
-        eng.reconsult(cell)
+        eng.reconsult_str(cell)
 
     def _line_cell_help(self, line, cell):
         opts, stmt = self.parse_options(line,'n:tcp:qo',
