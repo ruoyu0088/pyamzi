@@ -14,4 +14,4 @@ Download the project, and copy it to the Python search path. Download [Amzi! Pro
 
 ## Demos
 
-* [Introduction](pyamzi_demo.ipynb)
+* [Introduction](notebooks/pyamzi_demo.ipynb)
