@@ -34,6 +34,7 @@ RC_FUNCS = {
     "lsMakeList",
     "lsPushList",
     "lsMakeFAW",
+    "lsSetInput",
 }
 
 
@@ -52,6 +53,38 @@ class AmziError(Exception):
 class Struct(namedtuple("Struct", "functor arguments")):
     def __str__(self):
         return "{}({})".format(self.functor, ", ".join(map(str, self.arguments)))
+
+class StreamInput:
+    def __init__(self, eng):
+        self.getc = ffi.callback("int(void *)")(self._getc)
+        self.ungetc = ffi.callback("int(void *, int)")(self._ungetc)
+        eng.ls_set_input(self.getc, self.ungetc)
+
+    def _getc(self, void):
+        return 0
+
+    def _ungetc(self, void, c):
+        return 0
+
+
+class StringInput(StreamInput):
+    def __init__(self, eng):
+        self.buffer = StringIO("")
+        super().__init__(eng)
+
+    def _getc(self, void):
+        s = self.buffer.read(1)
+        if s:
+            return ord(s)
+        else:
+            return 0
+
+    def _ungetc(self, void, c):
+        self.buffer.seek(-2, os.SEEK_SET)
+        return ord(self.buffer.read(1))
+
+    def set_text(self, text):
+        self.buffer = StringIO(text)
 
 
 class StreamOutput:
@@ -333,6 +366,7 @@ class Engine:
         self.ls_set_stream(lib.USER_IN, 3)
         self.ls_set_stream(lib.USER_ERR, 3)
         self.output_stream = output(self)
+        self.input_stream = StringInput(self)
 
     def main(self):
         return self.ls_main()
@@ -348,6 +382,10 @@ class Engine:
     @output.setter
     def output(self, value):
         self.output_stream = value(self)
+
+    @property
+    def input(self):
+        return self.input_stream
 
     def consult(self, filename):
         self.exec_str("consult(`{}`)".format(filename))

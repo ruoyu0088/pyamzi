@@ -103,6 +103,7 @@ int lsPushList(ENGid, TERMptr, TERM);
 int lsMakeFAW(ENGid, TERMptr, wchar_t*, ARITY);
 int lsUnifyArg(ENGid, TERMptr, int, cTYPE, VOIDptr);
 void lsGetExceptMsgW(ENGid, wchar_t*, int);
+int lsSetInput(ENGid, void *, void *);
 """)
 
 def main():
