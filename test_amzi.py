@@ -33,7 +33,7 @@ def test_terms(eng):
 
 
 def test_find_all(eng):
-    eng.assert_program("""
+    eng.reconsult_str("""
     test(x, y).
     test(x, z).
     test(t, x).
@@ -52,7 +52,7 @@ def test_find_all(eng):
 
 def test_pyfunc(eng):
     from math import sin, cos
-    eng.assert_program("""
+    eng.reconsult_str("""
     run_pybind(A, B, C):-
         pybind(sin, 1, A),
         pybind(cos, 1, B),
@@ -71,7 +71,7 @@ def test_pyfunc(eng):
 
 def test_pyiter(eng):
     eng.output = StringOutput
-    eng.assert_program("""
+    eng.reconsult_str("""
     iter(X):-
         pybind(next, X, Y),
         write(Y), nl,
@@ -129,7 +129,7 @@ def test_object_to_term(eng):
     assert term.to_object() == astruct
 
 
-def test_assert_program(eng):
+def test_reconsult_str(eng):
     eng.output = StringOutput
     test_code = """
     test(a, b).
@@ -142,7 +142,7 @@ def test_assert_program(eng):
         write(finished).
     """
 
-    eng.assert_program(test_code)
+    eng.reconsult_str(test_code)
     res, term = eng.call_str('go')
     assert res
     output = eng.output.get_value()
@@ -160,7 +160,7 @@ def test_query(eng):
     parent(a, b).
     parent(a, c).
     """
-    eng.assert_program(test_code)
+    eng.reconsult_str(test_code)
     assert eng.query_one("parent(X, Y)") == {"X":"a", "Y":"b"}
     assert eng.query_one("parent(b, X)") is None
     assert list(eng.query_all("parent(X, Y)")) == [{"X":"a", "Y":"b"}, {"X":"a", "Y":"c"}]

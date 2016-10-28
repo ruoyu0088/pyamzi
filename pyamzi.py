@@ -1,3 +1,4 @@
+import os
 import re
 from collections import namedtuple
 from io import StringIO
@@ -92,12 +93,15 @@ class StreamOutput:
         self.putc = ffi.callback("void(void *, int)")(self._putc)
         self.puts = ffi.callback("void(void *, wchar_t *)")(self._puts)
         eng.ls_set_output(self.putc, self.puts)
+        self.mute = False
 
     def _putc(self, void, c):
-        print(chr(c), end='')
+        if not self.mute:
+            print(chr(c), end='')
 
     def _puts(self, void, s):
-        print(ffi.string(s), end='')
+        if not self.mute:
+            print(ffi.string(s), end='')
 
 
 class StringOutput(StreamOutput):
@@ -106,10 +110,12 @@ class StringOutput(StreamOutput):
         super().__init__(eng)
 
     def _putc(self, void, c):
-        self.buffer.write(chr(c))
+        if not self.mute:
+            self.buffer.write(chr(c))
 
     def _puts(self, void, s):
-        self.buffer.write(ffi.string(s))
+        if not self.mute:
+            self.buffer.write(ffi.string(s))
 
     def get_value(self):
         return self.buffer.getvalue()
@@ -406,6 +412,20 @@ class Engine:
             clause = clause.strip()
             if clause:
                 self.assertz(clause)
+
+    def _consult_str_help(self, command, program):
+        program += "\nquit.\n"
+        self.input.set_text(program)
+        mute = self.output.mute
+        self.output.mute = True
+        self.exec_str(command)
+        self.output.mute = mute
+
+    def consult_str(self, program):
+        self._consult_str_help("consult(user)", program)
+
+    def reconsult_str(self, program):
+        self._consult_str_help("reconsult(user)", program)
 
     def close(self):
         self.ls_close()

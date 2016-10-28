@@ -28,10 +28,18 @@ class AmziMagics(Magics):
     @magic_arguments.magic_arguments()
     @name_argument
     @cell_magic
-    def prolog(self, line, cell):
-        args = magic_arguments.parse_argstring(self.prolog, line)
+    def consult(self, line, cell):
+        args = magic_arguments.parse_argstring(self.consult, line)
         eng = self.get_engine(args)
-        eng.assert_program(cell)
+        eng.consult(cell)
+
+    @magic_arguments.magic_arguments()
+    @name_argument
+    @cell_magic
+    def reconsult(self, line, cell):
+        args = magic_arguments.parse_argstring(self.reconsult, line)
+        eng = self.get_engine(args)
+        eng.reconsult(cell)
 
     def _line_cell_help(self, line, cell):
         opts, stmt = self.parse_options(line,'n:tcp:qo',
