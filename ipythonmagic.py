@@ -47,10 +47,23 @@ class AmziMagics(Magics):
         code = cell if cell is not None else stmt
         return eng, code
 
+    @line_magic
+    def redo(self, line=''):
+        opts, stmt = self.parse_options(line,'n:tcp:qo',
+                                        posix=False, strict=False)
+        eng = self.get_engine(opts)
+        return eng.redo()
+
     @line_cell_magic
     def call_term(self, line='', cell=None):
         eng, code = self._line_cell_help(line, cell)
         res, term = eng.call_str(code)
+        return res, term
+
+    @line_cell_magic
+    def exec_term(self, line='', cell=None):
+        eng, code = self._line_cell_help(line, cell)
+        res, term = eng.exec_str(code)
         return res, term
 
     @line_cell_magic

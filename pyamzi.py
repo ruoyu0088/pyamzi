@@ -258,6 +258,7 @@ class Engine:
         self._eng_id = ffi.new("ENGidptr")
         lib.lsInitW(self._eng_id, name)
         self._register_lib_functions()
+        self._call_stack = []
 
         self.buffer = ffi.new("wchar_t[]", self.buffer_size)
         self._wchar_t_cache = {}
@@ -452,7 +453,10 @@ class Engine:
         return bool(res), self._make_term_object(term)
 
     def call_str(self, term_str):
-        return self._call_exec_help("lsCallStrW", term_str)
+        res, term = self._call_exec_help("lsCallStrW", term_str)
+        if res:
+            self._call_stack.append(term)
+        return res, term
 
     def exec_str(self, term_str):
         return self._call_exec_help("lsExecStrW", term_str)
@@ -474,16 +478,29 @@ class Engine:
         while True:
             query_res = query_term.to_object()
             yield dict(zip(query_res[::2], query_res[1::2]))
-            if not self.redo():
+            if not self._redo():
                 break
 
+    def _redo(self):
+        return bool(self.ls_redo())
+
     def redo(self):
-        res = self.ls_redo()
+        res = self._redo()
+        if res:
+            return res, self._call_stack[-1]
+        else:
+            term = self._call_stack.pop()
+            return res, term
+
+    def _clear_call(self):
+        res = self.ls_clear_call()
         return bool(res)
 
     def clear_call(self):
-        res = self.ls_clear_call()
-        return bool(res)
+        res = self._clear_call()
+        if res:
+            term = self._call_stack.pop()
+        return res, term
 
     def find_all(self, term_str):
         list_res = []
@@ -491,7 +508,7 @@ class Engine:
         if not res or term is None:
             return list_res
         list_res.append(term.to_object())
-        while self.redo():
+        while self._redo():
             list_res.append(term.to_object())
         return list_res
 
