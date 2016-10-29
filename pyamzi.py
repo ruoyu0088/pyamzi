@@ -423,10 +423,10 @@ class Engine:
         self.exec_str(command)
 
     def consult_str(self, program):
-        self._consult_str_help("consult_input", program)
+        self._consult_str_help("pyamzi:consult_input", program)
 
     def reconsult_str(self, program):
-        self._consult_str_help("reconsult_input", program)
+        self._consult_str_help("pyamzi:reconsult_input", program)
 
     def close(self):
         self.ls_close()
