@@ -21,8 +21,7 @@ class AmziMagics(Magics):
             name = "default"
 
         if name not in self.engines:
-            self.engines[name] = eng = Engine(name)
-            eng.load(find_files("dummy.xpl")[0])
+            self.engines[name] = eng = Engine(name, load_init=True)
         return self.engines[name]
 
     @magic_arguments.magic_arguments()

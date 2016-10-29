@@ -1,15 +1,12 @@
 import pytest
 import uuid
 from .pyamzi import Engine, Struct, StringOutput
+from .utils import find_files
 
 @pytest.fixture(scope='function')
 def eng(request):
-    from os import path
-    xpl_fn = path.join(path.dirname(__file__), "xpl", "dummy.xpl")
     name = str(uuid.uuid1())
-    eng = Engine(name)
-    eng.load(xpl_fn)
-
+    eng = Engine(name, load_init=True)
     def teardown():
         eng.close()
 

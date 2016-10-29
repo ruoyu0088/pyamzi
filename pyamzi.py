@@ -253,7 +253,7 @@ class Term:
 class Engine:
     buffer_size = 65536
 
-    def __init__(self, name):
+    def __init__(self, name, load_init=True):
         self.name = name
         self._eng_id = ffi.new("ENGidptr")
         lib.lsInitW(self._eng_id, name)
@@ -278,6 +278,8 @@ class Engine:
         }
         self._preds_table = self.make_preds_table(self.preds_table)
         self.ls_init_preds(self._preds_table)
+        if load_init:
+            self.load(find_files("init.xpl")[0])
 
     def _register_lib_functions(self):
         for name in dir(lib):
@@ -424,10 +426,10 @@ class Engine:
         self.output.mute = mute
 
     def consult_str(self, program):
-        self._consult_str_help("consult(user)", program)
+        self._consult_str_help("consult_input", program)
 
     def reconsult_str(self, program):
-        self._consult_str_help("reconsult(user)", program)
+        self._consult_str_help("reconsult_input", program)
 
     def close(self):
         self.ls_close()
@@ -572,5 +574,5 @@ class Engine:
 
 
 if __name__ == '__main__':
-    eng = Engine("test")
-    eng.load(find_files("dummy.xpl"))
+    eng = Engine("test", load_init=True)
+
