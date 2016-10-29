@@ -329,7 +329,13 @@ class Engine:
         funcargs = arg1.to_object()
         if not isinstance(funcargs, list):
             funcargs = [funcargs]
-        func = getattr(funcexport, funcname)
+        if "." in funcname:
+            obj = funcexport
+            for name in funcname.split("."):
+                obj = getattr(obj, name)
+            func = obj
+        else:
+            func = getattr(funcexport, funcname)
         res = func(*funcargs)
         return res
 
