@@ -420,10 +420,7 @@ class Engine:
     def _consult_str_help(self, command, program):
         program += "\nquit.\n"
         self.input.set_text(program)
-        mute = self.output.mute
-        self.output.mute = True
         self.exec_str(command)
-        self.output.mute = mute
 
     def consult_str(self, program):
         self._consult_str_help("consult_input", program)
