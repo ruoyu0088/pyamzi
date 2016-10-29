@@ -5,3 +5,4 @@ apls
 .vscode
 .ipynb_checkpoints
 *.plm
+debug.ipynb
