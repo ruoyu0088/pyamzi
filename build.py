@@ -77,6 +77,7 @@ pTYPE lsGetArgType(ENGid, TERM, int);
 int lsGetArg(ENGid, TERM, int, cTYPE, VOIDptr);
 int lsGetFAW(ENGid, TERM, wchar_t*, ARITYptr);
 int lsTermToStrW(ENGid, TERM, wchar_t*, int);
+int lsTermToStrQW(ENGid, TERM, wchar_t*, int);
 int lsStrToTermW(ENGid, TERMptr, wchar_t*);
 int lsGetTerm(ENGid, TERM, cTYPE, VOIDptr);
 int lsGetHead(ENGid, TERM, cTYPE, VOIDptr);

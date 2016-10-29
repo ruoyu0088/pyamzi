@@ -243,7 +243,7 @@ class Term:
     def __str__(self):
         buf = self.eng.buffer
         length = self.eng.buffer_size
-        res = self.eng.ls_term_to_str(self.ID, buf, length)
+        res = self.eng.ls_term_to_str_q(self.ID, buf, length)
         return ffi.string(buf)
 
     def __repr__(self):
