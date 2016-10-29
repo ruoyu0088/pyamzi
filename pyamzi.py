@@ -261,7 +261,7 @@ class Engine:
 
         self.buffer = ffi.new("wchar_t[]", self.buffer_size)
         self._wchar_t_cache = {}
-        self._object_cahce = {}
+        self._object_cache = set()
         self.preds_table = {
             "pytrue": (2, ffi.callback("int(void *)")(self.cb_pytrue)),
             "pybind": (3, ffi.callback("int(void *)")(self.cb_pybind)),
@@ -274,7 +274,7 @@ class Engine:
             lib.pSTR: [lib.cWSTR, "wchar_t *", ffi.string],
             lib.pINT: [lib.cINT, "int *", lambda o: int(o[0])],
             lib.pFLOAT: [lib.cDOUBLE, "double *", lambda o: float(o[0])],
-            lib.pADDR: [lib.cADDR, "ssize_t *", self._get_pyobject]
+            lib.pADDR: [lib.cADDR, "intptr_t *", self._get_pyobject]
         }
         self._preds_table = self.make_preds_table(self.preds_table)
         self.ls_init_preds(self._preds_table)
@@ -342,16 +342,18 @@ class Engine:
 
     def cb_pygetobj(self, _):
         obj = self._pycall_help()
-        addr = ffi.new("ssize_t *")
-        addr[0] = id(obj)
+        handle = ffi.new_handle(obj)
+        addr = ffi.new("intptr_t *")
+        addr[0] = ffi.cast("intptr_t", handle)
         res = self.ls_unify_parm(3, lib.cADDR, addr)
-        self._object_cahce[id(obj)] = obj
+        self._object_cache.add(handle)
         return bool(res)
 
     def cb_pydelobj(self, _):
         addr = self.get_param_addr(0)
-        if addr in self._object_cahce:
-            del self._object_cahce[addr]
+        handle = ffi.cast("void *", addr)
+        if handle in self._object_cache:
+            self._object_cache.remove(handle)
             return True
         else:
             return False
@@ -379,7 +381,7 @@ class Engine:
 
     @property
     def cached_object(self):
-        return self._object_cahce
+        return self._object_cache
 
     @property
     def output(self):
@@ -431,7 +433,7 @@ class Engine:
         self.ls_close()
 
     def get_param_addr(self, i):
-        addr = ffi.new("ssize_t *")
+        addr = ffi.new("intptr_t *")
         self.ls_get_parm(i+1, lib.cADDR, addr)
         return int(addr[0])
 
@@ -498,8 +500,11 @@ class Engine:
         return Term(self, term) if term[0] != ffi.NULL else None
 
     def _get_pyobject(self, addr):
-        addr = int(addr[0])
-        return self._object_cahce.get(addr, None)
+        handle = ffi.cast("void *", addr[0])
+        if handle in self._object_cache:
+            return ffi.from_handle(handle)
+        else:
+            return None
 
     def term_to_object(self, term):
         type_id = term.type_id

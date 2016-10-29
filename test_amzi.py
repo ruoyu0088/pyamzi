@@ -88,7 +88,6 @@ def test_pyiter(eng):
     assert res
     output = eng.output.get_value()
     assert output == "\n".join(map(str, range(5, 10))) + "\n"
-    obj = term.to_object()
     assert term.arguments[0] is None #X is deleted
     assert type(term.arguments[1]) == type(iter(range(1)))
     assert len(eng.cached_object) == 1
