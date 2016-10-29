@@ -66,7 +66,7 @@ class AmziMagics(Magics):
         return list(res)
 
     @line_cell_magic
-    def findall(self, line='', cell=None):
+    def find_all(self, line='', cell=None):
         eng, code = self._line_cell_help(line, cell)
         res = eng.find_all(code)
         return res
