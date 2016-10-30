@@ -264,8 +264,8 @@ class Engine:
         self._wchar_t_cache = {}
         self._object_cache = set()
         self.preds_table = {
-            "pytrue": (2, ffi.callback("int(void *)")(self.cb_pytrue)),
-            "pybind": (3, ffi.callback("int(void *)")(self.cb_pybind)),
+            "pycall": (2, ffi.callback("int(void *)")(self.cb_pycall2)),
+            "pycall": (3, ffi.callback("int(void *)")(self.cb_pycall3)),
             "pygetobj":  (3, ffi.callback("int(void *)")(self.cb_pygetobj)),
             "pydelobj": (1, ffi.callback("int(void *)")(self.cb_pydelobj)),
         }
@@ -339,15 +339,17 @@ class Engine:
         res = func(*funcargs)
         return res
 
-    def cb_pybind(self, _):
+    def cb_pycall3(self, _):
         try:
             obj = self._pycall_help()
         except:
             return False
-        term = ffi.new("TERMptr")
-        self.ls_str_to_term(term, "{}".format(obj))
-        res = self.ls_unify_parm(3, lib.cTERM, term)
-        return bool(res)
+        if isinstance(obj, (bool, int, float, str)):
+            term = self.object_to_term(obj)
+            res = self.ls_unify_parm(3, lib.cTERM, term.address)
+            return bool(res)
+        else:
+            return False
 
     def cb_pygetobj(self, _):
         obj = self._pycall_help()
@@ -367,7 +369,7 @@ class Engine:
         else:
             return False
 
-    def cb_pytrue(self, _):
+    def cb_pycall2(self, _):
         return bool(self._pycall_help())
 
     @property

@@ -50,12 +50,12 @@ def test_find_all(eng):
 def test_pyfunc(eng):
     from math import sin, cos
     eng.reconsult_str("""
-    run_pybind(A, B, C):-
-        pybind(sin, 1, A),
-        pybind(cos, 1, B),
-        pybind(add, [A, B], C).
+    run_pycall(A, B, C):-
+        pycall(sin, 1, A),
+        pycall(cos, 1, B),
+        pycall(add, [A, B], C).
     """)
-    res, term = eng.exec_str("run_pybind(A, B, C)")
+    res, term = eng.exec_str("run_pycall(A, B, C)")
     assert res
     obj = term.to_object()
     A, B, C = obj.arguments
@@ -70,7 +70,7 @@ def test_pyiter(eng):
     eng.output = StringOutput
     eng.reconsult_str("""
     iter(X):-
-        pybind(next, X, Y),
+        pycall(next, X, Y),
         write(Y), nl,
         iter(X).
     iter(_).
