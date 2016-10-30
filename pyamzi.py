@@ -264,7 +264,7 @@ class Engine:
         self._wchar_t_cache = {}
         self._object_cache = set()
         self.preds_table = {
-            "pycall": (2, ffi.callback("int(void *)")(self.cb_pycall2)),
+            "pypredicate": (2, ffi.callback("int(void *)")(self.cb_predicate)),
             "pycall": (3, ffi.callback("int(void *)")(self.cb_pycall3)),
             "pygetobj":  (3, ffi.callback("int(void *)")(self.cb_pygetobj)),
             "pydelobj": (1, ffi.callback("int(void *)")(self.cb_pydelobj)),
@@ -329,6 +329,7 @@ class Engine:
         funcargs = arg1.to_object()
         if not isinstance(funcargs, list):
             funcargs = [funcargs]
+        funcname = funcname.replace('$', '.')
         if "." in funcname:
             obj = funcexport
             for name in funcname.split("."):
@@ -369,7 +370,7 @@ class Engine:
         else:
             return False
 
-    def cb_pycall2(self, _):
+    def cb_predicate(self, _):
         return bool(self._pycall_help())
 
     @property
