@@ -9,6 +9,7 @@ Download the project, and copy it to the Python search path. Download [Amzi! Pro
 
 ## Requies
 
+* Python 3.5
 * [cffi](http://cffi.readthedocs.io/en/latest/)
 * [py.test](http://doc.pytest.org/en/latest/)
 
